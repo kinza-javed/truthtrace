@@ -11,10 +11,9 @@ def generate_ela(image_bytes: bytes):
 
     original = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
-    temp_path = f"{OUTPUT_DIR}/temp.jpg"
-    original.save(temp_path, "JPEG", quality=90)
-
-    compressed = Image.open(temp_path)
+    compressed_buffer = io.BytesIO()
+    original.save(compressed_buffer, "JPEG", quality=90)
+    compressed = Image.open(io.BytesIO(compressed_buffer.getvalue()))
 
     ela_image = ImageChops.difference(original, compressed)
 

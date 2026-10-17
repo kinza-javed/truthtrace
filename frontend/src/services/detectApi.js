@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API = "http://127.0.0.1:8000";
 
-const detectImage = async (file) => {
+const detectImage = async (file, highImpactReview = false) => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const settings = JSON.parse(localStorage.getItem("detectionSettings")) || {
@@ -19,6 +19,7 @@ const detectImage = async (file) => {
 
   formData.append("allow_multiple_faces", settings.allowMultipleFaces);
   formData.append("enable_report_generation", settings.enableReportGeneration);
+  formData.append("high_impact_review", highImpactReview);
 
   const res = await axios.post(`${API}/predict`, formData, {
     headers: {

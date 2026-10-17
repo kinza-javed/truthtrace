@@ -75,10 +75,16 @@ def build_forensic_pdf(result, output_path, api_base_path=""):
 
     story = []
 
-    story.append(Paragraph("Deepfake Forensic Analysis Report", title_style))
+    story.append(Paragraph("AI-Assisted Forensic Analysis Report", title_style))
     story.append(Paragraph(
-        "AI-assisted forensic report generated from model prediction, Grad-CAM attention, quality analysis, and explainable AI interpretation.",
+        "Automated analysis summary based on model output, Grad-CAM attention, image quality, and explainable AI interpretation.",
         normal_style
+    ))
+    story.append(Paragraph(
+        "This is an AI assessment, not a human-verified forensic conclusion. "
+        "Model scores are not calibrated probabilities; Grad-CAM regions show "
+        "model attention and do not establish manipulation.",
+        small_style
     ))
     story.append(Spacer(1, 14))
 
@@ -98,14 +104,17 @@ def build_forensic_pdf(result, output_path, api_base_path=""):
     attention_regions = selected_face.get("attention_regions", [])
 
     risk_level = gradcam_explanation.get("risk_level", "UNKNOWN")
+    human_review = result.get("human_review", {})
 
     story.append(Paragraph("1. Case Information", heading_style))
 
     case_data = [
         ["Analysis ID", safe(result.get("analysis_id"))],
         ["Filename", safe(result.get("filename"))],
-        ["Final Prediction", safe(prediction)],
-        ["Confidence", percent(confidence)],
+        ["AI Model Prediction", safe(prediction)],
+        ["Model Score (not calibrated)", percent(confidence)],
+        ["Human Review Status", safe(human_review.get("status"))],
+        ["Human Review Required", "Yes" if human_review.get("required_review") else "No"],
         ["Faces Detected", safe(result.get("faces_detected"))],
         ["Selected Face", f"Face #{safe(selected_face.get('face_index'))}"],
     ]
@@ -125,8 +134,8 @@ def build_forensic_pdf(result, output_path, api_base_path=""):
     story.append(Paragraph("2. Model Result Summary", heading_style))
 
     result_data = [
-        ["Real Probability", percent(real_prob)],
-        ["Fake Probability", percent(fake_prob)],
+        ["Real Model Score", percent(real_prob)],
+        ["Fake Model Score", percent(fake_prob)],
         ["Brightness", safe(quality.get("brightness"))],
         ["Blur Score", safe(quality.get("blur_score"))],
         ["Risk Level", safe(risk_level)],
@@ -208,7 +217,7 @@ def build_forensic_pdf(result, output_path, api_base_path=""):
             story.append(Paragraph(f"• {safe(line)}", normal_style))
     else:
         story.append(Paragraph(
-            "The system analyzed model attention, visual quality, and probability distribution to generate the prediction.",
+            "The system analyzed model attention, visual quality, and model scores to generate the prediction.",
             normal_style
         ))
 

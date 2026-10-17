@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.password_reset import router as password_reset_router
 from app.history import router as history_router
+from app.review import router as review_router
 from fastapi.staticfiles import StaticFiles
 
 
@@ -28,6 +29,7 @@ app.include_router(predict_router, tags=["Prediction"])
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 app.include_router(password_reset_router, prefix="/auth", tags=["Password Reset"])
 app.include_router(history_router, prefix="/api", tags=["History"])
+app.include_router(review_router, prefix="/api", tags=["Human Review"])
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.get("/")

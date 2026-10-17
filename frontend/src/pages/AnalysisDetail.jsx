@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import styles from "./AnalysisDetail.module.css";
+import ReviewPanel from "../components/ReviewPanel";
 
 const API = "http://127.0.0.1:8000";
 
@@ -44,63 +45,74 @@ export default function AnalysisDetail() {
         {error && <div className={styles.error}>{error}</div>}
 
         {analysis && (
-          <section className={styles.card}>
-            <div className={styles.topRow}>
-              <div>
-                <h2>{analysis.filename}</h2>
-                <p>{new Date(analysis.created_at).toLocaleString()}</p>
-              </div>
+          <>
+            <section className={styles.card}>
+              <div className={styles.topRow}>
+                <div>
+                  <h2>{analysis.filename}</h2>
+                  <p>{new Date(analysis.created_at).toLocaleString()}</p>
+                </div>
 
-              <span
-                className={
-                  analysis.prediction === "FAKE"
-                    ? styles.fakeBadge
-                    : styles.realBadge
-                }
-              >
-                {analysis.prediction}
-              </span>
-            </div>
-
-            <div className={styles.grid}>
-              <div className={styles.metric}>
-                <span>Confidence</span>
-                <strong>{(analysis.confidence * 100).toFixed(2)}%</strong>
-              </div>
-
-              <div className={styles.metric}>
-                <span>Real Probability</span>
-                <strong>{(analysis.real_prob * 100).toFixed(2)}%</strong>
-              </div>
-
-              <div className={styles.metric}>
-                <span>Fake Probability</span>
-                <strong>{(analysis.fake_prob * 100).toFixed(2)}%</strong>
-              </div>
-            </div>
-
-            <div className={styles.hashBox}>
-              <h3>SHA-256 Evidence Hash</h3>
-              <p>{analysis.sha256}</p>
-            </div>
-
-            <div className={styles.actions}>
-              {analysis.report && (
-                <a
-                  href={`${API}${analysis.report}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.primaryBtn}
+                <span
+                  className={
+                    analysis.prediction === "FAKE"
+                      ? styles.fakeBadge
+                      : styles.realBadge
+                  }
                 >
-                  Download Report
-                </a>
-              )}
+                  AI: {analysis.prediction}
+                </span>
+              </div>
 
-              <Link to="/history" className={styles.secondaryBtn}>
-                Back to History
-              </Link>
-            </div>
-          </section>
+              <div className={styles.grid}>
+                <div className={styles.metric}>
+                  <span>Model score (not calibrated)</span>
+                  <strong>{(analysis.confidence * 100).toFixed(2)}%</strong>
+                </div>
+
+                <div className={styles.metric}>
+                  <span>AI real score</span>
+                  <strong>{(analysis.real_prob * 100).toFixed(2)}%</strong>
+                </div>
+
+                <div className={styles.metric}>
+                  <span>AI fake score</span>
+                  <strong>{(analysis.fake_prob * 100).toFixed(2)}%</strong>
+                </div>
+              </div>
+
+              <p className={styles.disclaimer}>
+                The AI prediction and scores are preserved as model output; they
+                are not a human-verified forensic conclusion.
+              </p>
+
+              <div className={styles.hashBox}>
+                <h3>SHA-256 Evidence Hash</h3>
+                <p>{analysis.sha256}</p>
+              </div>
+
+              <div className={styles.actions}>
+                {analysis.report && (
+                  <a
+                    href={`${API}${analysis.report}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.primaryBtn}
+                  >
+                    Download Report
+                  </a>
+                )}
+
+                <Link to="/history" className={styles.secondaryBtn}>
+                  Back to History
+                </Link>
+              </div>
+            </section>
+            <ReviewPanel
+              analysisId={analysis.id}
+              faceResults={analysis.face_results || []}
+            />
+          </>
         )}
       </main>
     </>
