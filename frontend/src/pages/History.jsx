@@ -74,7 +74,6 @@ export default function History() {
                   <th>Confidence</th>
                   <th>Real</th>
                   <th>Fake</th>
-                  <th>Human review</th>
                   <th>Date</th>
                   <th>Report</th>
                   <th>Details</th>
@@ -101,13 +100,6 @@ export default function History() {
                     <td>{(item.confidence * 100).toFixed(2)}%</td>
                     <td>{(item.real_prob * 100).toFixed(2)}%</td>
                     <td>{(item.fake_prob * 100).toFixed(2)}%</td>
-                    <td>
-                      {item.human_review
-                        ? item.human_review.verdict
-                          ? item.human_review.verdict.replaceAll("_", " ")
-                          : item.human_review.status.replaceAll("_", " ")
-                        : "N/A"}
-                    </td>
 
                     <td>{new Date(item.created_at).toLocaleString()}</td>
 

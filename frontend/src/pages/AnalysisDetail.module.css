@@ -106,15 +106,6 @@
     word-break: break-all;
     color: #475569;
   }
-
-  .disclaimer {
-    margin: 18px 0;
-    padding: 14px 16px;
-    border-left: 4px solid #6366f1;
-    background: #eef2ff;
-    color: #334155;
-    line-height: 1.55;
-  }
   
   .actions {
     margin-top: 24px;

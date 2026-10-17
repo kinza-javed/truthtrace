@@ -61,7 +61,7 @@ def generate_forensic_explanation(face, result, attention_regions=None):
 
     if prediction == "REAL":
         explanation["verdict_summary"] = (
-            f"The selected face is classified as REAL with a {real_prob * 100:.2f}% real model score. "
+            f"The selected face is classified as REAL with {real_prob * 100:.2f}% real probability. "
             "The explanation is based only on detected face-landmark regions, not background areas."
         )
 
@@ -85,7 +85,7 @@ def generate_forensic_explanation(face, result, attention_regions=None):
 
     else:
         explanation["verdict_summary"] = (
-            f"The selected face is classified as FAKE with a {fake_prob * 100:.2f}% fake model score. "
+            f"The selected face is classified as FAKE with {fake_prob * 100:.2f}% fake probability. "
             "The explanation is restricted to face-landmark regions only."
         )
 

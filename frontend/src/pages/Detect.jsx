@@ -2,7 +2,6 @@ import { useState } from "react";
 import detectImage from "../services/detectApi";
 import styles from "./Detect.module.css";
 import Navbar from "../components/Navbar";
-import { Link } from "react-router-dom";
 
 export default function Detect() {
   const API = "http://127.0.0.1:8000";
@@ -14,7 +13,6 @@ export default function Detect() {
   const [loading, setLoading] = useState(false);
   const [displaySize, setDisplaySize] = useState({ width: 500, height: 1 });
   const [activeFaceIndex, setActiveFaceIndex] = useState(0);
-  const [highImpactReview, setHighImpactReview] = useState(false);
 
   const handleFileSelect = (selectedFile) => {
     if (!selectedFile) return;
@@ -57,7 +55,7 @@ export default function Detect() {
     setLoading(true);
 
     try {
-      const data = await detectImage(file, highImpactReview);
+      const data = await detectImage(file);
       setResult(data);
       setActiveFaceIndex(0);
     } catch (err) {
@@ -128,8 +126,8 @@ export default function Detect() {
     summaryLines.length > 0
       ? summaryLines.join(" ")
       : isFake
-        ? "Model attention was strongest around localized facial regions. Texture, boundary, lighting, or structural inconsistencies contributed to the higher fake model score."
-        : "The analyzed face shows stronger authentic indicators with a lower fake model score across the selected regions.";
+      ? "Model attention was strongest around localized facial regions. Texture, boundary, lighting, or structural inconsistencies contributed to the higher fake probability."
+      : "The analyzed face shows stronger authentic indicators with lower fake probability across the selected regions.";
 
   const qualityBrightness = activeFace?.quality?.brightness ?? "N/A";
   const qualityBlurScore = activeFace?.quality?.blur_score ?? "N/A";
@@ -226,18 +224,6 @@ export default function Detect() {
                 </div>
               </div>
 
-              <label className={styles.impactOption}>
-                <input
-                  type="checkbox"
-                  checked={highImpactReview}
-                  onChange={(event) => setHighImpactReview(event.target.checked)}
-                />
-                <span>
-                  <strong>High-impact or legal case</strong>
-                  <small>Always require human review, regardless of model score.</small>
-                </span>
-              </label>
-
               <button className={styles.detectBtn} onClick={handleUpload} disabled={loading}>
                 {loading ? "Analyzing..." : "Detect Forgery"}
               </button>
@@ -253,26 +239,6 @@ export default function Detect() {
 
         {result && activeFace && (
           <>
-            {result.human_review && (
-              <section className={styles.reviewNotice}>
-                <div>
-                  <strong>
-                    {result.human_review.required_review
-                      ? "Human review required"
-                      : "Provisional AI assessment"}
-                  </strong>
-                  <p>
-                    {result.human_review.required_review
-                      ? "Do not treat this AI result as a final conclusion. Open the case to investigate evidence and record a separate human verdict."
-                      : "This score-based routing check is not calibrated. A human reviewer can inspect the evidence and record a separate verdict."}
-                  </p>
-                </div>
-                <Link to={`/history/${result.analysis_id}`}>
-                  Open adaptive review
-                </Link>
-              </section>
-            )}
-
             <section className={styles.resultHero}>
               <div className={styles.heroCopy}>
                 <div className={styles.heroIcon}>✦</div>
@@ -288,7 +254,7 @@ export default function Detect() {
                   <div className={styles.verdictNote}>
                     <span>✺</span>
                     <strong>
-                      The model assigned this face a {isFake ? "higher fake score." : "higher real score."}
+                      The selected face indicates a {isFake ? "higher probability of being a deepfake." : "higher probability of being authentic."}
                     </strong>
                   </div>
                 </div>
@@ -364,7 +330,7 @@ export default function Detect() {
                 <div className={styles.middleColumn}>
                   <div className={styles.metricPanel}>
                     <div className={styles.panelTitle}>
-                      <h3>Selected Face AI Prediction</h3>
+                      <h3>Selected Face Verdict</h3>
                       <span className={isFake ? styles.fakeBadge : styles.realBadge}>{activePrediction}</span>
                     </div>
 
@@ -375,13 +341,13 @@ export default function Detect() {
                     </div>
 
                     <div className={styles.metricRow}>
-                      <span>Real model score</span>
+                      <span>Real Probability</span>
                       <ProgressBar value={realPercent} type="blue" />
                       <b>{formatPercent(activeRealProb)}</b>
                     </div>
 
                     <div className={styles.metricRow}>
-                      <span>Fake model score</span>
+                      <span>Fake Probability</span>
                       <ProgressBar value={fakePercent} type="pink" />
                       <b>{formatPercent(activeFakeProb)}</b>
                     </div>
@@ -418,13 +384,13 @@ export default function Detect() {
                     </div>
 
                     <div className={styles.indicatorRow}>
-                      <span>Fake model score</span>
+                      <span>Fake Probability</span>
                       <b>{formatRawPercent(fakePercent)}</b>
                     </div>
                     <ProgressBar value={fakePercent} type="red" />
 
                     <div className={styles.indicatorRow}>
-                      <span>Real model score</span>
+                      <span>Real Probability</span>
                       <b>{formatRawPercent(realPercent)}</b>
                     </div>
                     <ProgressBar value={realPercent} type="blue" />

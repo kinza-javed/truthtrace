@@ -4,7 +4,7 @@ import base64
 import os
 
 from app.database import get_db
-from app.models import Analysis, User
+from app.models import Analysis
 from app.file_validators import validate_image
 from app.hash_service import generate_sha256
 from app.onnx_inference import Cockatoos
@@ -17,7 +17,6 @@ from app.upload_service import save_uploaded_image
 from app.gradcam_service import generate_gradcam
 from app.gradcam_marker import mark_gradcam_regions
 from app.forensic_explainer import generate_forensic_explanation
-from app.review import assess_review_route, create_review_case
 
 router = APIRouter()
 
@@ -93,7 +92,6 @@ def build_report_payload(
         "forensic_explanation": most_suspicious.get("forensic_explanation", {}),
         "report_sections": {
             "final_verdict": True,
-            "ai_model_assessment": True,
             "probability_breakdown": True,
             "quality_metrics": True,
             "gradcam_evidence": True,
@@ -101,7 +99,6 @@ def build_report_payload(
             "xai_textual_explanation": True,
             "forensic_explanation": True,
             "audit_trail": True,
-            "human_review": True,
         },
     }
 
@@ -112,17 +109,8 @@ async def predict_image(
     user_id: int | None = Form(None),
     allow_multiple_faces: bool = Form(True),
     enable_report_generation: bool = Form(True),
-    high_impact_review: bool = Form(False),
     db: Session = Depends(get_db),
 ):
-    if user_id is None:
-        raise HTTPException(
-            status_code=401,
-            detail="Sign in before creating an analysis with a traceable review case.",
-        )
-    if not db.query(User).filter(User.id == user_id).first():
-        raise HTTPException(status_code=401, detail="User account not found.")
-
     validate_image(file)
 
     contents = await file.read()
@@ -318,10 +306,6 @@ async def predict_image(
         marked_gradcam_path=marked_gradcam_path,
         exif_data=exif_data,
     )
-    report_payload["human_review"] = assess_review_route(
-        report_payload,
-        high_impact=high_impact_review,
-    )
 
     pdf_path = None
 
@@ -346,29 +330,15 @@ async def predict_image(
         db.commit()
         db.refresh(analysis)
 
-    review_case = create_review_case(
-        db,
-        analysis,
-        report_payload,
-        high_impact=high_impact_review,
-    )
-    db.commit()
-    db.refresh(review_case)
-
     image_base64 = base64.b64encode(contents).decode("utf-8")
 
     response_payload = {
         **report_payload,
         "image": image_base64,
         "report": to_public_path(pdf_path),
-        "human_review": {
-            **report_payload["human_review"],
-            "case_id": review_case.id,
-        },
         "settings_used": {
             "allow_multiple_faces": allow_multiple_faces,
             "enable_report_generation": enable_report_generation,
-            "high_impact_review": high_impact_review,
         },
     }
 
