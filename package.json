@@ -1,0 +1,11 @@
+{
+  "name": "fyp-project",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "start": "npm run start --workspace frontend",
+    "build": "npm run build --workspace frontend"
+  }
+}

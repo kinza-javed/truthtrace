@@ -1,0 +1,124 @@
+.navbar {
+    height: 72px;
+    width: 100%;
+    padding: 0 56px;
+  
+    background: linear-gradient(
+      135deg,
+      rgba(238, 242, 255, 0.96),
+      rgba(224, 242, 254, 0.96),
+      rgba(248, 250, 252, 0.96)
+    );
+  
+    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    backdrop-filter: blur(18px);
+  
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  
+    box-sizing: border-box;
+  }
+  
+  .logo {
+    font-size: 22px;
+    font-weight: 900;
+    color: #0f172a;
+    text-decoration: none;
+    letter-spacing: -0.4px;
+  }
+  
+  .links {
+    display: flex;
+    gap: 22px;
+    align-items: center;
+  }
+  
+  .links a {
+    text-decoration: none;
+    color: #475569;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  
+  .links a:hover {
+    color: #2563eb;
+  }
+  
+  .user {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  
+  button {
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    border: none;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 10px 22px rgba(59, 130, 246, 0.22);
+  }
+  
+  button:hover {
+    transform: translateY(-1px);
+    opacity: 0.96;
+  }
+  
+  @media (max-width: 700px) {
+    .navbar {
+      padding: 0 18px;
+    }
+  
+    .user {
+      display: none;
+    }
+  
+    .links {
+      gap: 12px;
+    }
+  
+    .logo {
+      font-size: 18px;
+    }
+  }
+
+  .dropdown {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .dropdownMenu {
+    position: absolute;
+    top: 120%;
+    left: 0;
+    background: white;
+    border-radius: 10px;
+    padding: 10px 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    display: none;
+    min-width: 180px;
+    z-index: 10;
+  }
+  
+  .dropdownMenu a {
+    display: block;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: #1e293b;
+    font-weight: 500;
+  }
+  
+  .dropdownMenu a:hover {
+    background: #f1f5f9;
+  }
+  
+  .dropdown:hover .dropdownMenu {
+    display: block;
+  }

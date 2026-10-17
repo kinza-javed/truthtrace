@@ -1,0 +1,73 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "fontSize": "56px",
+    "fontFamily": "Arial Black, Arial, sans-serif",
+    "primaryTextColor": "#000000",
+    "primaryBorderColor": "#000000",
+    "lineColor": "#000000"
+  },
+  "flowchart": {
+    "htmlLabels": true,
+    "nodeSpacing": 160,
+    "rankSpacing": 180,
+    "padding": 40,
+    "useMaxWidth": false
+  }
+}}%%
+flowchart TD
+  classDef action fill:#ffffff,stroke:#000000,stroke-width:5px,color:#000000
+  classDef decision fill:#f5f5f5,stroke:#000000,stroke-width:5px,color:#000000
+  classDef terminal fill:#ffffff,stroke:#000000,stroke-width:6px,color:#000000
+
+  Start((("<b>START</b>"))):::terminal --> A1["<b>Open Web App</b>"]:::action
+  A1 --> D1{"<b>User logged in?</b>"}:::decision
+
+  D1 -->|"<b>No</b>"| A2["<b>Sign Up or Login</b>"]:::action
+  A2 --> D2{"<b>Email verified?</b>"}:::decision
+  D2 -->|"<b>No</b>"| A3["<b>Verify Email via link</b>"]:::action
+  A3 --> A4["<b>Login</b>"]:::action
+  D2 -->|"<b>Yes</b>"| A4
+  A4 --> A5["<b>Go to Detect Page</b>"]:::action
+
+  D1 -->|"<b>Yes</b>"| A5
+
+  A5 --> A6["<b>Select Detection Settings</b>"]:::action
+  A6 --> A7["<b>Upload Image</b>"]:::action
+  A7 --> A8["<b>Backend validates image format/size</b>"]:::action
+  A8 --> D3{"<b>Valid image?</b>"}:::decision
+
+  D3 -->|"<b>No</b>"| E1["<b>Show validation error</b>"]:::action --> End((("<b>END</b>"))):::terminal
+  D3 -->|"<b>Yes</b>"| A9["<b>Compute SHA-256 and Save upload</b>"]:::action
+
+  A9 --> A10["<b>Detect faces in image</b>"]:::action
+  A10 --> D4{"<b>Any face detected?</b>"}:::decision
+  D4 -->|"<b>No</b>"| E2["<b>Show: No human face detected</b>"]:::action --> End
+
+  D4 -->|"<b>Yes</b>"| D5{"<b>Too many faces?</b>"}:::decision
+  D5 -->|"<b>Yes</b>"| E3["<b>Show: Too many faces</b>"]:::action --> End
+  D5 -->|"<b>No</b>"| D6{"<b>Allow multiple faces?</b>"}:::decision
+
+  D6 -->|"<b>No</b>"| A11["<b>Pick largest face</b>"]:::action
+  D6 -->|"<b>Yes</b>"| A12["<b>Use all detected faces</b>"]:::action
+
+  A11 --> A13["<b>For each face: Quality checks</b>"]:::action
+  A12 --> A13
+
+  A13 --> D7{"<b>Face quality OK?</b>"}:::decision
+  D7 -->|"<b>No</b>"| E4["<b>Show quality error</b>"]:::action --> End
+  D7 -->|"<b>Yes</b>"| A14["<b>Run ONNX deepfake inference</b>"]:::action
+  A14 --> A15["<b>Generate explanations</b>"]:::action
+  A15 --> A16["<b>Generate forensic artifacts</b>"]:::action
+
+  A16 --> D8{"<b>Generate PDF report enabled?</b>"}:::decision
+  D8 -->|"<b>Yes</b>"| A17["<b>Generate PDF report</b>"]:::action
+  D8 -->|"<b>No</b>"| A18["<b>Skip report generation</b>"]:::action
+
+  A17 --> A19["<b>Save analysis record in DB</b>"]:::action
+  A18 --> A19
+
+  A19 --> A20["<b>Return result to frontend</b>"]:::action
+  A20 --> A21["<b>Display results to user</b>"]:::action
+  A21 --> A22["<b>User views History or Detail</b>"]:::action
+  A22 --> End

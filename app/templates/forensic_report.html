@@ -1,0 +1,25 @@
+<html>
+<head>
+    <style>
+        body { font-family: Arial; }
+        h1 { color: #2c3e50; }
+        img { width: 300px; margin: 10px; }
+    </style>
+</head>
+
+<body>
+
+<h1>Deepfake Forensic Report</h1>
+
+<p><b>Prediction:</b> {{prediction}}</p>
+<p><b>Confidence:</b> {{confidence}}</p>
+<p><b>SHA256:</b> {{sha256}}</p>
+
+<h2>ELA Analysis</h2>
+<img src="{{ela_path}}" />
+
+<h2>Noise Analysis</h2>
+<img src="{{noise_path}}" />
+
+</body>
+</html>

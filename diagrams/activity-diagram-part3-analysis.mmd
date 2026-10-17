@@ -1,0 +1,36 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "fontSize": "58px",
+    "fontFamily": "Arial Black, Arial, sans-serif",
+    "primaryTextColor": "#000000",
+    "primaryBorderColor": "#000000",
+    "lineColor": "#000000"
+  },
+  "flowchart": {
+    "htmlLabels": true,
+    "nodeSpacing": 150,
+    "rankSpacing": 160,
+    "padding": 40,
+    "useMaxWidth": false
+  }
+}}%%
+flowchart TD
+  classDef action fill:#ffffff,stroke:#000000,stroke-width:6px,color:#000000
+  classDef decision fill:#f5f5f5,stroke:#000000,stroke-width:6px,color:#000000
+  classDef terminal fill:#ffffff,stroke:#000000,stroke-width:7px,color:#000000
+
+  Start((("<b>START ANALYSIS</b>"))):::terminal --> A14["<b>ONNX Inference</b>"]:::action
+  A14 --> A15["<b>Generate Explanations</b>"]:::action
+  A15 --> A16["<b>Generate Forensics</b>"]:::action
+
+  A16 --> D8{"<b>PDF enabled?</b>"}:::decision
+  D8 -->|"<b>Yes</b>"| A17["<b>Generate PDF</b>"]:::action
+  D8 -->|"<b>No</b>"| A18["<b>Skip PDF</b>"]:::action
+  A17 --> A19["<b>Save to DB</b>"]:::action
+  A18 --> A19
+
+  A19 --> A20["<b>Return Results</b>"]:::action
+  A20 --> A21["<b>Display to User</b>"]:::action
+  A21 --> A22["<b>View History</b>"]:::action
+  A22 --> End((("<b>END</b>"))):::terminal

@@ -1,0 +1,45 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "fontSize": "58px",
+    "fontFamily": "Arial Black, Arial, sans-serif",
+    "primaryTextColor": "#000000",
+    "primaryBorderColor": "#000000",
+    "lineColor": "#000000"
+  },
+  "flowchart": {
+    "htmlLabels": true,
+    "nodeSpacing": 150,
+    "rankSpacing": 160,
+    "padding": 40,
+    "useMaxWidth": false
+  }
+}}%%
+flowchart TD
+  classDef action fill:#ffffff,stroke:#000000,stroke-width:6px,color:#000000
+  classDef decision fill:#f5f5f5,stroke:#000000,stroke-width:6px,color:#000000
+  classDef terminal fill:#ffffff,stroke:#000000,stroke-width:7px,color:#000000
+
+  Start((("<b>START DETECTION</b>"))):::terminal --> A6["<b>Select Settings</b>"]:::action
+  A6 --> A7["<b>Upload Image</b>"]:::action
+  A7 --> A8["<b>Validate Image</b>"]:::action
+  A8 --> D3{"<b>Valid image?</b>"}:::decision
+
+  D3 -->|"<b>No</b>"| E1["<b>Validation Error</b>"]:::action --> End((("<b>END</b>"))):::terminal
+  D3 -->|"<b>Yes</b>"| A9["<b>Save Upload</b>"]:::action
+  A9 --> A10["<b>Detect Faces</b>"]:::action
+  A10 --> D4{"<b>Face found?</b>"}:::decision
+
+  D4 -->|"<b>No</b>"| E2["<b>No Face Error</b>"]:::action --> End
+  D4 -->|"<b>Yes</b>"| D5{"<b>Too many faces?</b>"}:::decision
+  D5 -->|"<b>Yes</b>"| E3["<b>Too Many Faces Error</b>"]:::action --> End
+  D5 -->|"<b>No</b>"| D6{"<b>Multiple allowed?</b>"}:::decision
+
+  D6 -->|"<b>No</b>"| A11["<b>Largest Face</b>"]:::action
+  D6 -->|"<b>Yes</b>"| A12["<b>All Faces</b>"]:::action
+  A11 --> A13["<b>Quality Checks</b>"]:::action
+  A12 --> A13
+
+  A13 --> D7{"<b>Quality OK?</b>"}:::decision
+  D7 -->|"<b>No</b>"| E4["<b>Quality Error</b>"]:::action --> End
+  D7 -->|"<b>Yes</b>"| Next((("<b>CONTINUE</b>"))):::terminal

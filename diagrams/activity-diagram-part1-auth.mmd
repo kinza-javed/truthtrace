@@ -1,0 +1,35 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "fontSize": "58px",
+    "fontFamily": "Arial Black, Arial, sans-serif",
+    "primaryTextColor": "#000000",
+    "primaryBorderColor": "#000000",
+    "lineColor": "#000000"
+  },
+  "flowchart": {
+    "htmlLabels": true,
+    "nodeSpacing": 140,
+    "rankSpacing": 150,
+    "padding": 36,
+    "useMaxWidth": false
+  }
+}}%%
+flowchart TD
+  classDef action fill:#ffffff,stroke:#000000,stroke-width:5px,color:#000000
+  classDef decision fill:#f5f5f5,stroke:#000000,stroke-width:5px,color:#000000
+  classDef terminal fill:#ffffff,stroke:#000000,stroke-width:6px,color:#000000
+
+  Start((("<b>START</b>"))):::terminal --> A1["<b>Open Web App</b>"]:::action
+  A1 --> D1{"<b>User logged in?</b>"}:::decision
+
+  D1 -->|"<b>No</b>"| A2["<b>Sign Up or Login</b>"]:::action
+  A2 --> D2{"<b>Email verified?</b>"}:::decision
+  D2 -->|"<b>No</b>"| A3["<b>Verify Email via link</b>"]:::action
+  A3 --> A4["<b>Login</b>"]:::action
+  D2 -->|"<b>Yes</b>"| A4
+  A4 --> A5["<b>Go to Detect Page</b>"]:::action
+
+  D1 -->|"<b>Yes</b>"| A5
+
+  A5 --> End((("<b>CONTINUE TO DETECTION</b>"))):::terminal

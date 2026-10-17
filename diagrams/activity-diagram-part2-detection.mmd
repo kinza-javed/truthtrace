@@ -1,0 +1,58 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "fontSize": "52px",
+    "fontFamily": "Arial Black, Arial, sans-serif",
+    "primaryTextColor": "#000000",
+    "primaryBorderColor": "#000000",
+    "lineColor": "#000000"
+  },
+  "flowchart": {
+    "htmlLabels": true,
+    "nodeSpacing": 140,
+    "rankSpacing": 150,
+    "padding": 36,
+    "useMaxWidth": false
+  }
+}}%%
+flowchart TD
+  classDef action fill:#ffffff,stroke:#000000,stroke-width:5px,color:#000000
+  classDef decision fill:#f5f5f5,stroke:#000000,stroke-width:5px,color:#000000
+  classDef terminal fill:#ffffff,stroke:#000000,stroke-width:6px,color:#000000
+
+  Start((("<b>START DETECTION</b>"))):::terminal --> A6["<b>Select Detection Settings</b>"]:::action
+  A6 --> A7["<b>Upload Image</b>"]:::action
+  A7 --> A8["<b>Backend validates image</b>"]:::action
+  A8 --> D3{"<b>Valid image?</b>"}:::decision
+
+  D3 -->|"<b>No</b>"| E1["<b>Show validation error</b>"]:::action --> End((("<b>END</b>"))):::terminal
+  D3 -->|"<b>Yes</b>"| A9["<b>Save upload + SHA-256</b>"]:::action
+
+  A9 --> A10["<b>Detect faces</b>"]:::action
+  A10 --> D4{"<b>Face detected?</b>"}:::decision
+  D4 -->|"<b>No</b>"| E2["<b>No face detected error</b>"]:::action --> End
+  D4 -->|"<b>Yes</b>"| D5{"<b>Too many faces?</b>"}:::decision
+  D5 -->|"<b>Yes</b>"| E3["<b>Too many faces error</b>"]:::action --> End
+  D5 -->|"<b>No</b>"| D6{"<b>Multiple faces allowed?</b>"}:::decision
+
+  D6 -->|"<b>No</b>"| A11["<b>Pick largest face</b>"]:::action
+  D6 -->|"<b>Yes</b>"| A12["<b>Use all faces</b>"]:::action
+  A11 --> A13["<b>Quality checks</b>"]:::action
+  A12 --> A13
+
+  A13 --> D7{"<b>Quality OK?</b>"}:::decision
+  D7 -->|"<b>No</b>"| E4["<b>Quality error</b>"]:::action --> End
+  D7 -->|"<b>Yes</b>"| A14["<b>ONNX deepfake inference</b>"]:::action
+  A14 --> A15["<b>Generate explanations</b>"]:::action
+  A15 --> A16["<b>Generate forensics</b>"]:::action
+
+  A16 --> D8{"<b>PDF report enabled?</b>"}:::decision
+  D8 -->|"<b>Yes</b>"| A17["<b>Generate PDF report</b>"]:::action
+  D8 -->|"<b>No</b>"| A18["<b>Skip report</b>"]:::action
+  A17 --> A19["<b>Save to database</b>"]:::action
+  A18 --> A19
+
+  A19 --> A20["<b>Return results</b>"]:::action
+  A20 --> A21["<b>Display to user</b>"]:::action
+  A21 --> A22["<b>View history</b>"]:::action
+  A22 --> End

@@ -1,0 +1,26 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Node.js
+node_modules/
+frontend/node_modules/
+frontend/build/
+
+# Generated application data
+app/static/ela/
+app/static/forensic_outputs/
+app/static/gradcam/
+app/static/gradcam_marked/
+app/static/noise/
+app/static/reports/
+app/static/uploads/
+app/static/uploads_temp/
+app/storage/reports/
